@@ -3,8 +3,8 @@ set -e
 
 PORT="${PORT:-8080}"
 
-if [[ -n "${APP_KEY:-}" && "${APP_KEY}" != base64:* && "${#APP_KEY}" -gt 32 ]]; then
-    export APP_KEY="base64:${APP_KEY}"
+if ! php -r '$key = getenv("APP_KEY") ?: ""; if (str_starts_with($key, "base64:")) { $key = base64_decode(substr($key, 7), true); } exit(strlen($key) === 32 ? 0 : 1);'; then
+    export APP_KEY="$(php -r 'echo "base64:".base64_encode(random_bytes(32));')"
 fi
 
 sed -ri "s/^Listen [0-9]+/Listen ${PORT}/" /etc/apache2/ports.conf
@@ -14,6 +14,8 @@ mkdir -p storage/framework/cache/data storage/framework/sessions storage/framewo
 chown -R www-data:www-data storage bootstrap/cache
 
 php artisan config:clear --no-interaction
+php artisan route:clear --no-interaction
+php artisan view:clear --no-interaction
 
 if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
     php artisan migrate --force --no-interaction
@@ -21,7 +23,5 @@ fi
 
 php artisan storage:link --force --no-interaction || true
 php artisan config:cache --no-interaction
-php artisan route:cache --no-interaction
-php artisan view:cache --no-interaction
 
 exec "$@"
