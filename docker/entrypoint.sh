@@ -10,8 +10,11 @@ fi
 sed -ri "s/^Listen [0-9]+/Listen ${PORT}/" /etc/apache2/ports.conf
 sed -ri "s/<VirtualHost \*:[0-9]+>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/000-default.conf
 
-mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
+mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache database
+chown -R www-data:www-data storage bootstrap/cache database
+
+touch database/database.sqlite
+chown www-data:www-data database/database.sqlite
 
 php artisan config:clear --no-interaction
 php artisan route:clear --no-interaction

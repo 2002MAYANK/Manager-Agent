@@ -22,17 +22,9 @@ services:
       - key: LOG_LEVEL
         value: info
       - key: DB_CONNECTION
-        value: pgsql
-      - key: DB_URL
-        fromDatabase:
-          name: manager-agent-db
-          property: connectionString
-      - key: DATABASE_URL
-        fromDatabase:
-          name: manager-agent-db
-          property: connectionString
-      - key: DB_SSLMODE
-        value: require
+        value: sqlite
+      - key: DB_DATABASE
+        value: /var/www/html/database/database.sqlite
       - key: CACHE_STORE
         value: database
       - key: SESSION_DRIVER
@@ -43,9 +35,3 @@ services:
         value: true
       - key: GEMINI_API_KEY
         sync: false
-
-databases:
-  - name: manager-agent-db
-    plan: free
-    databaseName: manager_agent
-    user: manager_agent
