@@ -36,7 +36,7 @@
 
                 <div>
                     <label class="form-label" for="participant_ids">Participants</label>
-                    <div class="border rounded-3 p-3" style="max-height: 220px; overflow-y: auto; background: rgba(255, 255, 255, 0.03); border-color: var(--panel-border) !important;">
+                    <div class="border rounded-3 p-3" style="max-height: 220px; overflow-y: auto; background: var(--panel-soft); border-color: var(--panel-border) !important;">
                         @foreach ($employees as $employee)
                             <label class="d-flex align-items-center gap-2 mb-2" style="cursor: pointer;">
                                 <input
@@ -106,30 +106,24 @@
         <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
             <h2 class="panel-title mb-0">Meeting Notes</h2>
             <div class="d-flex align-items-center gap-2">
-                <input type="date" id="dateFilter" class="form-control form-control-sm" style="width: auto; background-color: var(--panel-soft); border-color: var(--panel-border); color: #fff;">
-                <span class="status-pill blue" id="totalCount">{{ $meetings->total() }} total</span>
+                <input type="date" id="dateFilter" class="form-control form-control-sm" style="width: auto; background-color: var(--panel-bg); border-color: var(--panel-border); color: var(--text);">
+                <span class="status-pill blue" id="totalCount">Meetings</span>
             </div>
         </div>
 
         <div class="table-responsive">
-            <table class="table data-table w-100">
+            <table class="table data-table w-100" id="dataTable">
                 <thead>
                     <tr>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="title">Title <i class="bi bi-arrow-down-up ms-1"></i></a></th>
+                        <th>Title</th>
                         <th>Participants</th>
                         <th>Notes</th>
                         <th>Audio</th>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="meeting_date">Date <i class="bi bi-arrow-down-up ms-1"></i></a></th>
+                        <th>Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    @include('components.meetings-table-body', ['meetings' => $meetings])
-                </tbody>
             </table>
-        </div>
-        <div id="paginationContainer" class="mt-4 d-flex justify-content-end">
-            {{ $meetings->links() }}
         </div>
     </section>
 
@@ -141,9 +135,9 @@
                     @method('PUT')
                     <div class="modal-header border-bottom-0 pb-0">
                         <h5 class="modal-title fw-bold" id="editMeetingModalLabel">
-                            <i class="bi bi-pencil-square me-2" style="color: #9b65ff;"></i>Edit Meeting
+                            <i class="bi bi-pencil-square me-2" style="color: var(--purple);"></i>Edit Meeting
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
@@ -156,7 +150,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Participants</label>
-                            <div class="border rounded-3 p-3" style="max-height: 220px; overflow-y: auto; background: rgba(255, 255, 255, 0.03); border-color: var(--panel-border) !important;">
+                            <div class="border rounded-3 p-3" style="max-height: 220px; overflow-y: auto; background: var(--panel-soft); border-color: var(--panel-border) !important;">
                                 @foreach ($employees as $employee)
                                     <label class="d-flex align-items-center gap-2 mb-2" style="cursor: pointer;">
                                         <input class="form-check-input m-0 edit-meeting-participant" type="checkbox" name="participant_ids[]" value="{{ $employee->id }}">
@@ -185,6 +179,33 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    let dt = $('#dataTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ url("/meetings") }}',
+            data: function (d) {
+                d.date = $('#dateFilter').val();
+            }
+        },
+        columns: [
+            { data: 'title', name: 'title' },
+            { data: 'participants', name: 'participants', orderable: false, searchable: false },
+            { data: 'notes', name: 'notes' },
+            { data: 'audio', name: 'audio', orderable: false, searchable: false },
+            { data: 'meeting_date', name: 'meeting_date' },
+            { data: 'actions', name: 'actions', orderable: false, searchable: false }
+        ]
+    });
+
+    $('#dateFilter').on('change', function() {
+        dt.draw();
+    });
+
+    $('#globalSearch').on('keyup', function() {
+        dt.search(this.value).draw();
+    });
+
     const container = document.getElementById('transcriptEntries');
     document.getElementById('addTranscriptEntry').addEventListener('click', function() {
         const entry = document.createElement('div');
@@ -226,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('editMeetingForm');
         form.action = '{{ url("/meetings") }}/' + editBtn.dataset.id;
         document.getElementById('editMeetingTitle').value = editBtn.dataset.title;
-        document.getElementById('editMeetingDate').value = editBtn.dataset.meetingDate.replace(' ', 'T').slice(0, 16);
+        document.getElementById('editMeetingDate').value = editBtn.dataset.date;
         document.getElementById('editMeetingNotes').value = editBtn.dataset.notes;
 
         const selectedParticipants = JSON.parse(editBtn.dataset.participants || '[]').map(String);

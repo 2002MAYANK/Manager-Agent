@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use App\Models\Employee;
 
 class EmployeeSeeder extends Seeder
@@ -13,55 +13,29 @@ class EmployeeSeeder extends Seeder
      */
     public function run(): void
     {
-        Employee::insert([
-            [
-                'name' => 'Rahul Sharma',
-                'email' => 'rahul@example.com',
-                'department' => 'Development',
-                'designation' => 'Laravel Developer',
-            ],
-            [
-                'name' => 'Arjun Singh',
-                'email' => 'arjun@example.com',
-                'department' => 'Development',
-                'designation' => 'Backend Developer',
-            ],
-            [
-                'name' => 'Shipra Gupta',
-                'email' => 'shipra@example.com',
-                'department' => 'QA',
-                'designation' => 'Tester',
-            ],
-            [
-                'name' => 'Anushka Verma',
-                'email' => 'anushka@example.com',
-                'department' => 'Frontend',
-                'designation' => 'Frontend Developer',
-            ],
-            [
-                'name' => 'Vikram Patel',
-                'email' => 'vikram@example.com',
-                'department' => 'Development',
-                'designation' => 'Full Stack Developer',
-            ],
-            [
-                'name' => 'Meera Nair',
-                'email' => 'meera@example.com',
-                'department' => 'HR',
-                'designation' => 'HR Manager',
-            ],
-            [
-                'name' => 'Sandeep Kumar',
-                'email' => 'sandeep@example.com',
-                'department' => 'Operations',
-                'designation' => 'Ops Lead',
-            ],
-            [
-                'name' => 'Priya Desai',
-                'email' => 'priya@example.com',
-                'department' => 'Design',
-                'designation' => 'Product Designer',
-            ],
-        ]);
+        $total = 10000;
+        $chunkSize = 1000;
+        $now = now();
+        $teamIds = DB::table('teams')->pluck('id')->toArray();
+
+        DB::transaction(function () use ($total, $chunkSize, $now, $teamIds) {
+            for ($i = 0; $i < $total; $i += $chunkSize) {
+                $chunk = [];
+                $rawEmployees = \Database\Factories\EmployeeFactory::new()->count($chunkSize)->raw();
+
+                foreach ($rawEmployees as $employee) {
+                    $employee['created_at'] = $now;
+                    $employee['updated_at'] = $now;
+                    if (!empty($teamIds) && rand(1, 100) <= 80) {
+                        $employee['team_id'] = $teamIds[array_rand($teamIds)];
+                    } else {
+                        $employee['team_id'] = null;
+                    }
+                    $chunk[] = $employee;
+                }
+
+                DB::table('employees')->insert($chunk);
+            }
+        });
     }
 }

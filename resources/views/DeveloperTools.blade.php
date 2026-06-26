@@ -23,29 +23,30 @@
         margin-bottom: 16px;
         border: 1px solid var(--panel-border);
         border-radius: 8px;
-        background: rgba(16, 27, 46, .4);
+        background: var(--panel-bg);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     .token-hash {
         font-family: monospace;
         font-size: 15px;
-        color: #fff;
-        background: rgba(0, 0, 0, .3);
+        color: var(--text);
+        background: var(--panel-soft);
         padding: 8px 12px;
         border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, .05);
+        border: 1px solid var(--panel-border);
         display: inline-block;
         margin: 8px 0;
     }
 
     .code-block {
-        background: #080d17;
+        background: #f8fafc;
         border: 1px solid var(--panel-border);
         border-radius: 8px;
         padding: 16px;
         font-family: monospace;
         font-size: 13px;
-        color: #e2e8f0;
+        color: #0f172a;
         overflow-x: auto;
         white-space: pre;
         margin-bottom: 24px;
@@ -66,12 +67,12 @@
     }
 
     .nav-tabs .nav-link:hover {
-        color: #fff;
+        color: var(--text);
         border-color: transparent;
     }
 
     .nav-tabs .nav-link.active {
-        color: #fff;
+        color: var(--purple);
         background: transparent;
         border-color: transparent;
         border-bottom-color: var(--purple);
@@ -85,7 +86,7 @@
     }
     
     .api-nav-btn {
-        background: rgba(16, 27, 46, .8);
+        background: var(--panel-bg);
         border: 1px solid var(--panel-border);
         color: var(--muted);
         padding: 8px 16px;
@@ -96,14 +97,19 @@
     }
     
     .api-nav-btn:hover {
-        color: #fff;
-        border-color: rgba(148, 163, 184, .3);
+        color: var(--text);
+        border-color: var(--muted);
+        background: var(--panel-soft);
     }
     
     .api-nav-btn.active {
         background: var(--purple);
         color: #fff;
         border-color: var(--purple);
+    }
+
+    .text-purple {
+        color: var(--purple) !important;
     }
 
     /* Toast Notification */
@@ -115,12 +121,12 @@
     }
 
     .custom-toast {
-        background: linear-gradient(145deg, #101d30, #0a111f);
-        color: #fff;
+        background: var(--panel-bg);
+        color: var(--text);
         border: 1px solid var(--green);
         border-radius: 8px;
         padding: 14px 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         display: flex;
         align-items: center;
         gap: 12px;
@@ -187,7 +193,7 @@
                             <div class="token-hash w-100 mb-0">
                                 ************************{{ substr($token->token, -4) }}
                             </div>
-                            <button type="button" class="btn btn-outline-light btn-sm" style="border-color: var(--panel-border); height: 38px;" onclick="copyToClipboard('{{ $token->token }}')" title="Copy Token">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" style="border-color: var(--panel-border); height: 38px; color: var(--text);" onclick="copyToClipboard('{{ $token->token }}')" title="Copy Token">
                                 <i class="bi bi-clipboard"></i>
                             </button>
                         </div>
@@ -204,7 +210,7 @@
                         <div class="d-flex gap-2">
                             <form action="{{ url('/developer-tools/tokens/' . $token->id . '/toggle') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-sm btn-outline-light" style="border-color: var(--panel-border);">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary" style="border-color: var(--panel-border); color: var(--text);">
                                     @if($token->is_active)
                                         <i class="bi bi-pause-circle me-1"></i> Deactivate
                                     @else
@@ -226,6 +232,73 @@
                         No API tokens generated yet.
                     </div>
                 @endforelse
+            </div>
+        </section>
+
+        <!-- GitLab Integration Panel -->
+        <section class="glass-card page-panel mt-4">
+            <h2 class="panel-title mb-4"><i class="bi bi-gitlab me-2" style="color: #fc6d26;"></i>GitLab Integration</h2>
+            
+            <div class="mb-4">
+                <div class="small fw-bold muted-text mb-2 text-uppercase">Connection status</div>
+                <div id="gitlabConnectionStatus" class="p-3 rounded border border-dashed text-center muted-text mb-3" style="border-color: var(--panel-border) !important; background: var(--panel-soft);">
+                    Not tested
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" id="btnTestGitLab" class="btn btn-sm btn-outline-secondary w-100" style="border-color: var(--panel-border); color: var(--text);">
+                        <i class="bi bi-shield-check me-1"></i> Test Connection
+                    </button>
+                    <button type="button" id="btnLoadRepos" class="btn btn-sm btn-outline-secondary w-100" style="border-color: var(--panel-border); color: var(--text);">
+                        <i class="bi bi-cloud-arrow-down me-1"></i> Load Repositories
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-4 d-none" id="gitlabReposContainer">
+                <label class="form-label small fw-bold text-uppercase muted-text" for="gitlabRepoSelect">Select Repository</label>
+                <select id="gitlabRepoSelect" class="form-select mb-3">
+                    <option value="">Choose repository...</option>
+                </select>
+
+                <button type="button" id="btnSyncCommits" class="btn-ai w-100" style="min-height: 45px; border-radius: 8px;">
+                    <i class="bi bi-arrow-repeat me-1"></i> Sync Commits
+                </button>
+
+                <div id="syncStatsContainer" class="mt-4 d-none">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Sync Summary & Statistics</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded" style="background: var(--panel-bg); border-color: var(--panel-border);">
+                                <div class="small muted-text text-uppercase fw-bold mb-1">Repository Name</div>
+                                <div class="fw-bold" id="statRepoName">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded" style="background: var(--panel-bg); border-color: var(--panel-border);">
+                                <div class="small muted-text text-uppercase fw-bold mb-1">Total Commits Synced</div>
+                                <div class="fw-bold" id="statTotalCommits">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded" style="background: var(--panel-bg); border-color: var(--panel-border);">
+                                <div class="small muted-text text-uppercase fw-bold mb-1">Total Contributors</div>
+                                <div class="fw-bold" id="statContributors">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded" style="background: var(--panel-bg); border-color: var(--panel-border);">
+                                <div class="small muted-text text-uppercase fw-bold mb-1">Most Active Contributor</div>
+                                <div class="fw-bold" id="statActiveContributor">-</div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="p-3 border rounded" style="background: var(--panel-bg); border-color: var(--panel-border);">
+                                <div class="small muted-text text-uppercase fw-bold mb-1">Last Sync Time / Last Commit Date</div>
+                                <div class="fw-bold" id="statLastCommit">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -397,6 +470,126 @@
         document.getElementById('apiDesc').textContent = data.desc;
         document.getElementById('apiCurl').textContent = data.curl;
         document.getElementById('apiResp').textContent = data.resp;
+    }
+
+    // GitLab Integration scripts
+    const btnTestGitLab = document.getElementById('btnTestGitLab');
+    const btnLoadRepos = document.getElementById('btnLoadRepos');
+    const btnSyncCommits = document.getElementById('btnSyncCommits');
+    const gitlabRepoSelect = document.getElementById('gitlabRepoSelect');
+    const gitlabReposContainer = document.getElementById('gitlabReposContainer');
+    const gitlabConnectionStatus = document.getElementById('gitlabConnectionStatus');
+
+    if (btnTestGitLab) {
+        btnTestGitLab.addEventListener('click', function () {
+            gitlabConnectionStatus.textContent = 'Testing connection...';
+            gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-warning border-warning';
+            
+            fetch('{{ url("/developer-tools/gitlab/test") }}')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        gitlabConnectionStatus.textContent = data.message;
+                        gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-success border-success';
+                    } else {
+                        gitlabConnectionStatus.textContent = data.message;
+                        gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-danger border-danger';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    gitlabConnectionStatus.textContent = 'Network error testing connection.';
+                    gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-danger border-danger';
+                });
+        });
+    }
+
+    if (btnLoadRepos) {
+        btnLoadRepos.addEventListener('click', function () {
+            gitlabConnectionStatus.textContent = 'Loading repositories...';
+            gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-warning border-warning';
+            
+            fetch('{{ url("/developer-tools/gitlab/projects") }}')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        gitlabConnectionStatus.textContent = 'Repositories loaded successfully.';
+                        gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-success border-success';
+                        
+                        // Clear previous options except placeholder
+                        gitlabRepoSelect.innerHTML = '<option value="">Choose repository...</option>';
+                        data.projects.forEach(p => {
+                            const opt = document.createElement('option');
+                            opt.value = p.id;
+                            opt.textContent = `${p.name} (ID: ${p.id})`;
+                            gitlabRepoSelect.appendChild(opt);
+                        });
+                        
+                        gitlabReposContainer.classList.remove('d-none');
+                    } else {
+                        gitlabConnectionStatus.textContent = data.message;
+                        gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-danger border-danger';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    gitlabConnectionStatus.textContent = 'Network error loading repositories.';
+                    gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-danger border-danger';
+                });
+        });
+    }
+
+    if (btnSyncCommits) {
+        btnSyncCommits.addEventListener('click', function () {
+            const projId = gitlabRepoSelect.value;
+            if (!projId) {
+                alert('Please select a repository first.');
+                return;
+            }
+
+            gitlabConnectionStatus.textContent = 'Syncing commits in progress...';
+            gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-warning border-warning';
+            btnSyncCommits.disabled = true;
+
+            fetch('{{ url("/developer-tools/gitlab/sync") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ project_id: projId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btnSyncCommits.disabled = false;
+                if (data.success) {
+                    gitlabConnectionStatus.textContent = data.message;
+                    gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-success border-success';
+                    
+                    // Show stats
+                    document.getElementById('syncStatsContainer').classList.remove('d-none');
+                    document.getElementById('statRepoName').textContent = data.repository_name || 'N/A';
+                    document.getElementById('statTotalCommits').textContent = data.count || '0';
+                    document.getElementById('statContributors').textContent = data.total_contributors || '0';
+                    document.getElementById('statActiveContributor').textContent = data.most_active_contributor || 'N/A';
+                    
+                    const now = new Date().toLocaleString();
+                    const lastCommit = data.last_commit_date || 'N/A';
+                    document.getElementById('statLastCommit').textContent = `Sync: ${now} | Commit: ${lastCommit}`;
+                    
+                    alert(data.message);
+                } else {
+                    gitlabConnectionStatus.textContent = data.message;
+                    gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-danger border-danger';
+                }
+            })
+            .catch(err => {
+                btnSyncCommits.disabled = false;
+                console.error(err);
+                gitlabConnectionStatus.textContent = 'Network error syncing commits.';
+                gitlabConnectionStatus.className = 'p-3 rounded border border-dashed text-center mb-3 text-danger border-danger';
+            });
+        });
     }
 </script>
 @endpush

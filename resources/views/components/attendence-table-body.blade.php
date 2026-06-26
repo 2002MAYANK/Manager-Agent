@@ -15,7 +15,7 @@
                     type="button"
                     class="btn btn-sm btn-outline-light edit-attendance-btn"
                     data-bs-toggle="modal"
-                    data-bs-target="#editAttendanceModal"
+                    data-bs-target="#editAttendenceModal"
                     data-id="{{ $attendence->id }}"
                     data-employee-id="{{ $attendence->employee_id }}"
                     data-date="{{ $attendence->date }}"

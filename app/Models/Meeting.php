@@ -15,6 +15,7 @@ class Meeting extends Model
         'most_active_speaker',
         'least_active_speaker',
         'meeting_duration',
+        'project_id',
     ];
 
     public function employees()
@@ -30,5 +31,10 @@ class Meeting extends Model
     public function recordings()
     {
         return $this->hasMany(MeetingRecording::class);
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
     }
 }

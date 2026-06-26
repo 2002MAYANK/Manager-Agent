@@ -6,7 +6,7 @@
 @push('styles')
     <style>
         .text-purple {
-            color: #9a6cff;
+            color: var(--purple);
         }
 
         .dashboard-hero {
@@ -18,82 +18,102 @@
         }
 
         .dashboard-hero h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 800;
             margin: 0 0 6px;
+            color: var(--text);
         }
 
         .stat-card {
-            min-height: 124px;
+            min-height: 120px;
             padding: 18px 20px;
             display: flex;
             align-items: center;
             gap: 16px;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--purple);
+            opacity: 0;
+            transition: opacity 0.2s ease;
         }
 
         .stat-card:hover {
             transform: translateY(-2px);
-            border-color: rgba(109, 57, 245, 0.35);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.26);
+            border-color: var(--purple-2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
         }
 
         .stat-icon {
-            width: 54px;
-            height: 54px;
+            width: 50px;
+            height: 50px;
             border-radius: 12px;
             display: grid;
             place-items: center;
-            font-size: 26px;
+            font-size: 22px;
             flex-shrink: 0;
         }
 
         .stat-icon.purple {
-            color: #9b65ff;
-            background: rgba(109, 57, 245, .22);
+            color: var(--purple);
+            background: rgba(37, 99, 235, .1);
         }
 
         .stat-icon.green {
-            color: #44f08a;
-            background: rgba(32, 198, 107, .2);
+            color: var(--green);
+            background: rgba(16, 185, 129, .1);
         }
 
         .stat-icon.blue {
-            color: #3480ff;
-            background: rgba(52, 120, 255, .2);
+            color: var(--purple-2);
+            background: rgba(59, 130, 246, .1);
         }
 
         .stat-icon.orange {
-            color: #ff941f;
-            background: rgba(255, 138, 20, .2);
+            color: var(--orange);
+            background: rgba(245, 158, 11, .1);
         }
 
         .stat-icon.pink {
-            color: #ff4cc0;
-            background: rgba(255, 76, 192, .2);
+            color: #EC4899;
+            background: rgba(236, 72, 153, .1);
         }
 
         .stat-label {
-            color: #bac3d2;
+            color: var(--muted);
             font-size: 13px;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .stat-number {
-            font-size: 28px;
+            font-size: 26px;
             line-height: 1.1;
             font-weight: 800;
             margin: 4px 0 6px;
+            color: var(--text);
         }
 
         .trend {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--muted);
         }
 
         .trend.up strong {
-            color: var(--green);
+            color: #047857;
         }
 
         .trend.down strong {
@@ -106,18 +126,20 @@
         }
 
         .section-title {
-            font-size: 18px;
-            font-weight: 800;
+            font-size: 16px;
+            font-weight: 700;
             margin: 0;
+            color: var(--text);
         }
 
         .chart-select {
             border: 1px solid var(--panel-border);
             border-radius: 8px;
-            background: #0c1524;
-            color: #fff;
-            height: 42px;
+            background: var(--panel-bg);
+            color: var(--text);
+            height: 38px;
             padding: 0 15px;
+            font-size: 13px;
         }
 
         .line-chart {
@@ -125,7 +147,7 @@
             height: 230px;
             margin-top: 24px;
             padding-left: 50px;
-            background-image: linear-gradient(to bottom, rgba(148, 163, 184, .13) 1px, transparent 1px);
+            background-image: linear-gradient(to bottom, rgba(148, 163, 184, .08) 1px, transparent 1px);
             background-size: 100% 25%;
         }
 
@@ -138,8 +160,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            color: #bac3d2;
-            font-size: 13px;
+            color: var(--muted);
+            font-size: 12px;
         }
 
         .chart-area {
@@ -163,8 +185,8 @@
             bottom: 0;
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            color: #bac3d2;
-            font-size: 13px;
+            color: var(--muted);
+            font-size: 12px;
             text-align: center;
         }
 
@@ -174,8 +196,10 @@
             top: 5px;
             padding: 6px 12px;
             border-radius: 6px;
-            background: linear-gradient(135deg, #5f39f6, #8d44ff);
-            font-weight: 800;
+            background: linear-gradient(135deg, var(--purple), var(--purple-2));
+            color: #fff;
+            font-weight: 700;
+            font-size: 12px;
         }
 
         .donut-wrap {
@@ -197,11 +221,11 @@
 
         .donut::before {
             content: "";
-            width: 104px;
-            height: 104px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            background: #0d1828;
-            box-shadow: inset 0 0 28px rgba(0, 0, 0, .26);
+            background: var(--panel-bg);
+            box-shadow: inset 0 0 12px rgba(0, 0, 0, .05);
         }
 
         .donut-center {
@@ -214,8 +238,9 @@
             grid-template-columns: 12px 1fr auto;
             align-items: center;
             gap: 12px;
-            margin-bottom: 22px;
-            font-size: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text);
         }
 
         .legend-dot {
@@ -230,24 +255,33 @@
         }
 
         .list-card.success {
-            border-color: rgba(32, 198, 107, .32);
+            border-top: 4px solid var(--green) !important;
         }
 
         .list-card.warning {
-            border-color: rgba(255, 138, 20, .38);
+            border-top: 4px solid var(--orange) !important;
         }
 
         .list-card.danger {
-            border-color: rgba(255, 77, 92, .38);
+            border-top: 4px solid var(--red) !important;
         }
 
         .mini-btn {
-            height: 39px;
+            height: 32px;
             border: 1px solid var(--panel-border);
-            color: #fff;
-            background: rgba(10, 18, 32, .7);
+            color: var(--muted);
+            background: var(--panel-bg);
             border-radius: 8px;
-            padding: 0 16px;
+            padding: 0 12px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .mini-btn:hover {
+            color: var(--text);
+            background: var(--panel-soft);
+            border-color: var(--muted);
         }
 
         .person-row {
@@ -256,8 +290,9 @@
             align-items: center;
             gap: 14px;
             padding: 12px 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+            border-bottom: 1px solid var(--panel-border);
             transition: all 0.2s ease;
+            color: var(--text);
         }
 
         .person-row:last-child {
@@ -267,7 +302,7 @@
 
         .progress {
             height: 6px;
-            background: rgba(148, 163, 184, .15);
+            background: var(--panel-soft);
         }
 
         .progress-bar.bg-success {
@@ -284,8 +319,9 @@
             gap: 16px;
             align-items: start;
             padding: 12px 0;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+            border-bottom: 1px solid var(--panel-border);
             transition: all 0.2s ease;
+            color: var(--text);
         }
 
         .risk-row:last-child {
@@ -324,7 +360,7 @@
 
         @media (max-width: 575.98px) {
             .dashboard-hero h1 {
-                font-size: 26px;
+                font-size: 24px;
             }
 
             .stat-card {
@@ -336,14 +372,94 @@
             .btn-ai {
                 width: 100%;
                 justify-content: center;
-
-
             }
 
             .person-row {
                 grid-template-columns: 20px 36px 1fr 42px;
                 gap: 10px;
             }
+        }
+
+        /* Executive Metrics & Insights Custom Styles */
+        .exec-stat-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exec-stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--purple-2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .exec-stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .exec-stat-icon.purple {
+            color: var(--purple);
+            background: rgba(37, 99, 235, .08);
+        }
+
+        .exec-stat-icon.green {
+            color: var(--green);
+            background: rgba(16, 185, 129, .08);
+        }
+
+        .exec-stat-icon.blue {
+            color: var(--purple-2);
+            background: rgba(59, 130, 246, .08);
+        }
+
+        .exec-stat-icon.orange {
+            color: var(--orange);
+            background: rgba(245, 158, 11, .08);
+        }
+
+        .exec-stat-icon.pink {
+            color: #EC4899;
+            background: rgba(236, 72, 153, .08);
+        }
+
+        .exec-card-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--panel-soft);
+        }
+
+        .exec-card-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .exec-card-item:first-child {
+            padding-top: 0;
+        }
+
+        .exec-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
     </style>
 @endpush
@@ -363,18 +479,13 @@
         </div>
 
         <div class="d-flex flex-wrap gap-3">
-            {{-- <div class="date-pill">
-                <i class="bi bi-calendar-event"></i>
-                <span>{{ $dateRangeLabel }}</span>
-                <i class="bi bi-chevron-down ms-2"></i>
-            </div> --}}
-            <a href="{{ url('/export-data') }}" class="btn-ai d-inline-flex align-items-center" style="border-radius: 24px; background: linear-gradient(135deg, #1b6b3a, #20c66b); box-shadow: 0 10px 24px rgba(32, 198, 107, .25);">
+            <a href="{{ url('/export-data') }}" class="btn btn-success d-inline-flex align-items-center px-4" style="border-radius: 24px; min-height: 40px;">
                 <i class="bi bi-download me-2"></i> Export Data
             </a>
-            <button type="button" class="btn-ai d-inline-flex align-items-center" style="border-radius: 24px; background: linear-gradient(135deg, #1a4d8c, #3478ff); box-shadow: 0 10px 24px rgba(52, 120, 255, .25);" data-bs-toggle="modal" data-bs-target="#importDataModal">
+            <button type="button" class="btn btn-outline-primary d-inline-flex align-items-center px-4" style="border-radius: 24px; min-height: 40px;" data-bs-toggle="modal" data-bs-target="#importDataModal">
                 <i class="bi bi-upload me-2"></i> Import Data
             </button>
-            <button type="button" class="btn-ai d-inline-flex align-items-center" style="border-radius: 24px;" data-bs-toggle="modal" data-bs-target="#generateReportModal">
+            <button type="button" class="btn-ai d-inline-flex align-items-center px-4" style="border-radius: 24px;" data-bs-toggle="modal" data-bs-target="#generateReportModal">
                 <i class="bi bi-stars me-2"></i> Generate Report
             </button>
         </div>
@@ -433,6 +544,168 @@
         </div>
     </div>
 
+    <!-- Executive Insights Section -->
+    <div class="mt-5 mb-3">
+        <h2 class="section-title"><i class="bi bi-shield-check text-purple me-2"></i>Executive Insights</h2>
+    </div>
+
+    <!-- Executive KPI Cards -->
+    <div class="row g-3 g-xl-4 mb-4">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="exec-stat-card">
+                <div class="exec-stat-icon purple"><i class="bi bi-person-badge"></i></div>
+                <div>
+                    <div class="stat-label">Employees</div>
+                    <div class="stat-number fs-5 mt-1 mb-0 fw-bold">{{ $totalEmployeesCount }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="exec-stat-card">
+                <div class="exec-stat-icon blue"><i class="bi bi-people"></i></div>
+                <div>
+                    <div class="stat-label">Teams</div>
+                    <div class="stat-number fs-5 mt-1 mb-0 fw-bold">{{ $totalTeamsCount }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="exec-stat-card">
+                <div class="exec-stat-icon green"><i class="bi bi-briefcase"></i></div>
+                <div>
+                    <div class="stat-label">Projects</div>
+                    <div class="stat-number fs-5 mt-1 mb-0 fw-bold">{{ $totalProjectsCount }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="exec-stat-card">
+                <div class="exec-stat-icon orange"><i class="bi bi-list-task"></i></div>
+                <div>
+                    <div class="stat-label">Tasks (All)</div>
+                    <div class="stat-number fs-5 mt-1 mb-0 fw-bold">{{ $stats['total_tasks']['value'] ?? 0 }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="exec-stat-card">
+                <div class="exec-stat-icon pink"><i class="bi bi-github"></i></div>
+                <div>
+                    <div class="stat-label">Commits</div>
+                    <div class="stat-number fs-5 mt-1 mb-0 fw-bold">{{ $totalCommitsCount }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="exec-stat-card">
+                <div class="exec-stat-icon purple"><i class="bi bi-heart-pulse"></i></div>
+                <div>
+                    <div class="stat-label">Health Score</div>
+                    <div class="stat-number fs-5 mt-1 mb-0 fw-bold">{{ $orgHealthScore }}%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Dashboard Sections -->
+    <div class="row g-3 g-xl-4 mb-4">
+        <!-- Leadership Snapshot -->
+        <div class="col-md-6 col-xl-3">
+            <div class="glass-card p-4" style="min-height: 250px;">
+                <h3 class="exec-card-title"><i class="bi bi-award text-purple"></i> Leadership Snapshot</h3>
+                <div class="d-flex flex-column">
+                    <div class="exec-card-item">
+                        <span class="muted-text small">Top Performer</span>
+                        <span class="fw-semibold text-dark">{{ $topPerformerName }}</span>
+                    </div>
+                    <div class="exec-card-item">
+                        <span class="muted-text small">Best Team</span>
+                        <span class="fw-semibold text-dark">{{ $bestPerformingTeamName }}</span>
+                    </div>
+                    <div class="exec-card-item">
+                        <span class="muted-text small">Requires Attention</span>
+                        <span class="fw-semibold text-warning">{{ $employeesAttentionCount }}</span>
+                    </div>
+                    <div class="exec-card-item">
+                        <span class="muted-text small">High Risk Projects</span>
+                        <span class="fw-semibold text-danger">{{ $highRiskProjectsCount }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GitLab Overview -->
+        <div class="col-md-6 col-xl-3">
+            <div class="glass-card p-4" style="min-height: 250px;">
+                <h3 class="exec-card-title"><i class="bi bi-git text-danger"></i> GitLab Overview</h3>
+                <div class="d-flex flex-column">
+                    <div class="exec-card-item">
+                        <span class="muted-text small">Repos Synced</span>
+                        <span class="fw-semibold text-dark">{{ $totalReposSynced }}</span>
+                    </div>
+                    <div class="exec-card-item">
+                        <span class="muted-text small">Total Commits</span>
+                        <span class="fw-semibold text-dark">{{ $totalCommitsCount }}</span>
+                    </div>
+                    <div class="exec-card-item">
+                        <span class="muted-text small">Top Contributor</span>
+                        <span class="fw-semibold text-dark text-truncate" style="max-width: 120px;" title="{{ $topContributorName }}">{{ $topContributorName }}</span>
+                    </div>
+                    <div class="exec-card-item">
+                        <span class="muted-text small">Last Sync</span>
+                        <span class="fw-semibold text-dark small text-end">{{ $lastSyncTime }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Overview -->
+        <div class="col-md-6 col-xl-3">
+            <div class="glass-card p-4" style="min-height: 250px;">
+                <h3 class="exec-card-title"><i class="bi bi-kanban text-success"></i> Project Overview</h3>
+                <div class="d-flex flex-column">
+                    <div class="exec-card-item">
+                        <span class="muted-text small">Planning</span>
+                        <span class="fw-semibold text-dark">{{ $projectStatsObj->planning ?? 0 }}</span>
+                    </div>
+                    <div class="exec-card-item">
+                        <span class="muted-text small">In Progress</span>
+                        <span class="fw-semibold text-primary">{{ $projectStatsObj->in_progress ?? 0 }}</span>
+                    </div>
+                    <div class="exec-card-item">
+                        <span class="muted-text small">Completed</span>
+                        <span class="fw-semibold text-success">{{ $projectStatsObj->completed ?? 0 }}</span>
+                    </div>
+                    <div class="exec-card-item">
+                        <span class="muted-text small">On Hold</span>
+                        <span class="fw-semibold text-warning">{{ $projectStatsObj->on_hold ?? 0 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Recommendations -->
+        <div class="col-md-6 col-xl-3">
+            <div class="glass-card p-4" style="min-height: 250px; border-top: 4px solid var(--purple);">
+                <h3 class="exec-card-title"><i class="bi bi-stars text-warning"></i> AI Recommendations</h3>
+                <div class="d-flex flex-column gap-2">
+                    <div class="p-2 rounded-2" style="background: rgba(37, 99, 235, 0.03); border-left: 3px solid var(--purple);">
+                        <div class="fw-semibold text-dark small" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Productivity</div>
+                        <div class="text-muted mt-1" style="font-size: 12px; line-height: 1.3;">{{ $aiRecommendations['productivity'] }}</div>
+                    </div>
+                    <div class="p-2 rounded-2" style="background: rgba(16, 185, 129, 0.03); border-left: 3px solid var(--green);">
+                        <div class="fw-semibold text-dark small" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Team</div>
+                        <div class="text-muted mt-1" style="font-size: 12px; line-height: 1.3;">{{ $aiRecommendations['team'] }}</div>
+                    </div>
+                    <div class="p-2 rounded-2" style="background: rgba(245, 158, 11, 0.03); border-left: 3px solid var(--orange);">
+                        <div class="fw-semibold text-dark small" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Project Risk</div>
+                        <div class="text-muted mt-1" style="font-size: 12px; line-height: 1.3;">{{ $aiRecommendations['project'] }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-3 g-xl-4 mb-4">
         <div class="col-xl-7">
             <div class="glass-card chart-card">
@@ -455,14 +728,14 @@
                         <svg viewBox="0 0 700 190" preserveAspectRatio="none" aria-hidden="true">
                             <defs>
                                 <linearGradient id="lineFill" x1="0" x2="0" y1="0" y2="1">
-                                    <stop offset="0%" stop-color="#6d39f5" stop-opacity=".35" />
-                                    <stop offset="100%" stop-color="#6d39f5" stop-opacity="0" />
+                                    <stop offset="0%" stop-color="var(--purple)" stop-opacity=".2" />
+                                    <stop offset="100%" stop-color="var(--purple)" stop-opacity="0" />
                                 </linearGradient>
                             </defs>
                             <polygon points="{{ $chart['area_points'] }}" fill="url(#lineFill)" />
-                            <polyline points="{{ $chart['line_points'] }}" fill="none" stroke="#7a3dff"
+                            <polyline points="{{ $chart['line_points'] }}" fill="none" stroke="var(--purple)"
                                 stroke-width="4" />
-                            <g fill="#fff" stroke="#7a3dff" stroke-width="4">
+                            <g fill="#fff" stroke="var(--purple)" stroke-width="4">
                                 @foreach (explode(' ', $chart['line_points']) as $point)
                                     @php
                                         $coordinates = explode(',', $point);
@@ -608,45 +881,45 @@
     <!-- Import Data Modal -->
     <div class="modal fade" id="importDataModal" tabindex="-1" aria-labelledby="importDataModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content glass-card" style="background: linear-gradient(145deg, #111d30, #080f1c);">
+            <div class="modal-content glass-card" style="background: var(--panel-bg);">
                 <form action="{{ url('/import-data') }}" method="POST" enctype="multipart/form-data" id="importDataForm">
-                    @csrf
-                    <div class="modal-header border-bottom-0 pb-0">
-                        <h5 class="modal-title fw-bold" id="importDataModalLabel">
-                            <i class="bi bi-upload me-2" style="color: #3478ff;"></i>Import Data
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="p-3 rounded mb-3" style="background: rgba(52, 120, 255, 0.1); border: 1px solid rgba(52, 120, 255, 0.2);">
-                            <div class="fw-bold mb-2" style="color: #78a5ff;"><i class="bi bi-info-circle me-2"></i>Import Format</div>
-                            <div class="small muted-text">Upload a <strong class="text-white">CSV file</strong> with the following columns:</div>
-                            <ul class="small muted-text mt-2 mb-0">
-                                <li><span class="text-white">Employee Name</span> — Full name of the employee</li>
-                                <li><span class="text-white">Tasks</span> — Number of tasks</li>
-                                <li><span class="text-white">Meetings Attended</span> — Number of meetings</li>
-                                <li><span class="text-white">Attendence Count</span> — Number of attendence records</li>
-                                <li><span class="text-white">Commits Count</span> — Number of commits</li>
-                            </ul>
-                        </div>
+                     @csrf
+                     <div class="modal-header border-bottom-0 pb-0">
+                         <h5 class="modal-title fw-bold" id="importDataModalLabel">
+                             <i class="bi bi-upload me-2" style="color: var(--purple);"></i>Import Data
+                         </h5>
+                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body text-dark">
+                         <div class="p-3 rounded mb-3" style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15);">
+                             <div class="fw-bold mb-2 text-primary"><i class="bi bi-info-circle me-2"></i>Import Format</div>
+                             <div class="small muted-text">Upload a <strong class="text-dark">CSV file</strong> with the following columns:</div>
+                             <ul class="small muted-text mt-2 mb-0">
+                                 <li><span class="text-dark fw-bold">Employee Name</span> — Full name of the employee</li>
+                                 <li><span class="text-dark fw-bold">Tasks</span> — Number of tasks</li>
+                                 <li><span class="text-dark fw-bold">Meetings Attended</span> — Number of meetings</li>
+                                 <li><span class="text-dark fw-bold">Attendence Count</span> — Number of attendance records</li>
+                                 <li><span class="text-dark fw-bold">Commits Count</span> — Number of commits</li>
+                             </ul>
+                         </div>
 
-                        <div class="p-3 rounded mb-3" style="background: rgba(255, 138, 20, 0.08); border: 1px solid rgba(255, 138, 20, 0.2);">
-                            <div class="small" style="color: #ffb05f;"><i class="bi bi-lightbulb me-2"></i><strong>Tip:</strong> Use the <strong>Export Data</strong> button first to get the exact CSV format, then modify and re-import.</div>
-                        </div>
+                         <div class="p-3 rounded mb-3" style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.15);">
+                             <div class="small text-warning" style="color: #b45309 !important;"><i class="bi bi-lightbulb me-2"></i><strong>Tip:</strong> Use the <strong>Export Data</strong> button first to get the exact CSV format, then modify and re-import.</div>
+                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="importFile">CSV File</label>
-                            <input class="form-control" type="file" id="importFile" name="import_file" accept=".csv" required>
-                            <div class="form-text muted-text">Maximum file size: 10 MB</div>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top-0 pt-0">
-                        <button type="button" class="btn btn-link text-muted text-decoration-none" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn-ai" id="btnImportData" style="background: linear-gradient(135deg, #1a4d8c, #3478ff);">
-                            <span id="btnImportText"><i class="bi bi-upload me-2"></i>Import Data</span>
-                            <div class="spinner-border spinner-border-sm d-none ms-2" id="btnImportSpinner" role="status"></div>
-                        </button>
-                    </div>
+                         <div class="mb-3">
+                             <label class="form-label" for="importFile">CSV File</label>
+                             <input class="form-control" type="file" id="importFile" name="import_file" accept=".csv" required>
+                             <div class="form-text muted-text">Maximum file size: 10 MB</div>
+                         </div>
+                     </div>
+                     <div class="modal-footer border-top-0 pt-0">
+                         <button type="button" class="btn btn-link text-muted text-decoration-none" data-bs-dismiss="modal">Cancel</button>
+                         <button type="submit" class="btn-ai" id="btnImportData">
+                             <span id="btnImportText"><i class="bi bi-upload me-2"></i>Import Data</span>
+                             <div class="spinner-border spinner-border-sm d-none ms-2" id="btnImportSpinner" role="status"></div>
+                         </button>
+                     </div>
                 </form>
             </div>
         </div>
@@ -655,14 +928,14 @@
     <!-- Generate Report Modal -->
     <div class="modal fade" id="generateReportModal" tabindex="-1" aria-labelledby="generateReportModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content glass-card" style="background: linear-gradient(145deg, #111d30, #080f1c);">
+            <div class="modal-content glass-card" style="background: var(--panel-bg);">
                 <form action="{{ url('/generate-report') }}" method="POST" id="generateReportForm">
                     @csrf
                     <div class="modal-header border-bottom-0 pb-0">
                         <h5 class="modal-title fw-bold" id="generateReportModalLabel">Generate AI Performance Report</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body text-dark">
                         <div class="mb-3">
                             <label class="form-label">Report Period</label>
                             <select class="form-select mb-3" id="quickPeriodSelect">
@@ -685,17 +958,17 @@
                             </div>
                         </div>
 
-                        <div class="p-3 rounded mb-2" style="background: rgba(109, 57, 245, 0.1); border: 1px solid rgba(109, 57, 245, 0.2);">
-                            <div class="fw-bold mb-2 text-purple">Report Preview</div>
-                            <div class="small muted-text mb-3">Selected Period:<br><span id="previewPeriod" class="text-white"></span></div>
+                        <div class="p-3 rounded mb-2" style="background: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15);">
+                            <div class="fw-bold mb-2 text-primary">Report Preview</div>
+                            <div class="small muted-text mb-3">Selected Period:<br><span id="previewPeriod" class="text-dark fw-bold"></span></div>
                             
                             <div class="small fw-bold mb-2">Records Found:</div>
                             <ul class="list-unstyled small muted-text mb-0" id="previewCounts">
-                                <li>Employees: <span id="countEmployees" class="text-white">...</span></li>
-                                <li>Tasks: <span id="countTasks" class="text-white">...</span></li>
-                                <li>Attendence Records: <span id="countAttendence" class="text-white">...</span></li>
-                                <li>Commit Logs: <span id="countCommits" class="text-white">...</span></li>
-                                <li>Meetings: <span id="countMeetings" class="text-white">...</span></li>
+                                <li>Employees: <span id="countEmployees" class="text-dark fw-bold">...</span></li>
+                                <li>Tasks: <span id="countTasks" class="text-dark fw-bold">...</span></li>
+                                <li>Attendance Records: <span id="countAttendence" class="text-dark fw-bold">...</span></li>
+                                <li>Commit Logs: <span id="countCommits" class="text-dark fw-bold">...</span></li>
+                                <li>Meetings: <span id="countMeetings" class="text-dark fw-bold">...</span></li>
                             </ul>
                         </div>
                     </div>

@@ -46,4 +46,67 @@ class DeveloperToolsController extends Controller
 
         return redirect('/developer-tools')->with('success', 'Token deleted successfully.');
     }
+
+    public function testGitLabConnection(\App\Services\GitLabService $gitlab)
+    {
+        $token = env('GITLAB_TOKEN');
+        if (empty($token)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'GitLab Token (GITLAB_TOKEN) is not configured in the .env file.'
+            ]);
+        }
+
+        $projects = $gitlab->getProjects();
+        if (is_array($projects) && (!empty($projects) || count($projects) >= 0)) {
+            // GitLab returns an array on successful auth.
+            return response()->json([
+                'success' => true,
+                'message' => 'Connection to GitLab successful! Accessible projects: ' . count($projects)
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to connect to GitLab. Please verify your token.'
+        ]);
+    }
+
+    public function getGitLabProjects(\App\Services\GitLabService $gitlab)
+    {
+        $projects = $gitlab->getProjects();
+        if (!is_array($projects)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve repositories. Ensure your token is correct.'
+            ]);
+        }
+
+        $formatted = collect($projects)->map(function ($p) {
+            return [
+                'id' => $p['id'],
+                'name' => $p['name_with_namespace'] ?? $p['name'],
+                'last_activity' => isset($p['last_activity_at']) ? \Carbon\Carbon::parse($p['last_activity_at'])->format('Y-m-d H:i') : 'N/A'
+            ];
+        })->values();
+
+        return response()->json([
+            'success' => true,
+            'projects' => $formatted
+        ]);
+    }
+
+    public function syncGitLabCommits(Request $request, \App\Services\GitLabService $gitlab)
+    {
+        $projectId = $request->input('project_id');
+        if (empty($projectId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please select a repository first.'
+            ]);
+        }
+
+        $result = $gitlab->syncCommits($projectId);
+        return response()->json($result);
+    }
 }

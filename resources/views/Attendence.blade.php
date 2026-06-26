@@ -74,44 +74,38 @@
         <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
             <h2 class="panel-title mb-0">Attendance Records</h2>
             <div class="d-flex align-items-center gap-2">
-                <input type="date" id="dateFilter" class="form-control form-control-sm" style="width: auto; background-color: var(--panel-soft); border-color: var(--panel-border); color: #fff;">
-                <span class="status-pill blue" id="totalCount">{{ $attendences->total() }} total</span>
+                <input type="date" id="dateFilter" class="form-control form-control-sm" style="width: auto; background-color: var(--panel-bg); border-color: var(--panel-border); color: var(--text);">
+                <span class="status-pill blue" id="totalCount">Attendance</span>
             </div>
         </div>
 
         <div class="table-responsive">
-            <table class="table data-table w-100">
+            <table class="table data-table w-100" id="dataTable">
                 <thead>
                     <tr>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="employee_name">Employee <i class="bi bi-arrow-down-up ms-1"></i></a></th>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="date">Date <i class="bi bi-arrow-down-up ms-1"></i></a></th>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="check_in">Check In <i class="bi bi-arrow-down-up ms-1"></i></a></th>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="check_out">Check Out <i class="bi bi-arrow-down-up ms-1"></i></a></th>
+                        <th>Employee</th>
+                        <th>Date</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    @include('components.attendence-table-body', ['attendences' => $attendences])
-                </tbody>
             </table>
-        </div>
-        <div id="paginationContainer" class="mt-4 d-flex justify-content-end">
-            {{ $attendences->links() }}
         </div>
     </section>
 
-    <div class="modal fade" id="editAttendanceModal" tabindex="-1" aria-labelledby="editAttendanceModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editAttendenceModal" tabindex="-1" aria-labelledby="editAttendenceModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content glass-card">
                 <form id="editAttendanceForm" method="POST" class="d-grid gap-3">
                     @csrf
                     @method('PUT')
                     <div class="modal-header border-bottom-0 pb-0">
-                        <h5 class="modal-title fw-bold" id="editAttendanceModalLabel">
-                            <i class="bi bi-pencil-square me-2" style="color: #9b65ff;"></i>Edit Attendance
+                        <h5 class="modal-title fw-bold" id="editAttendenceModalLabel">
+                            <i class="bi bi-pencil-square me-2" style="color: var(--purple);"></i>Edit Attendance
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
@@ -160,8 +154,35 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    let dt = $('#dataTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ url("/attendence") }}',
+            data: function (d) {
+                d.date = $('#dateFilter').val();
+            }
+        },
+        columns: [
+            { data: 'employee_name', name: 'employee_name' },
+            { data: 'date', name: 'date' },
+            { data: 'check_in', name: 'check_in' },
+            { data: 'check_out', name: 'check_out' },
+            { data: 'present', name: 'present' },
+            { data: 'actions', name: 'actions', orderable: false, searchable: false }
+        ]
+    });
+
+    $('#dateFilter').on('change', function() {
+        dt.draw();
+    });
+
+    $('#globalSearch').on('keyup', function() {
+        dt.search(this.value).draw();
+    });
+
     document.addEventListener('click', function (e) {
-        const editBtn = e.target.closest('.edit-attendance-btn');
+        const editBtn = e.target.closest('.edit-attendence-btn, .edit-attendance-btn');
         if (!editBtn) {
             return;
         }

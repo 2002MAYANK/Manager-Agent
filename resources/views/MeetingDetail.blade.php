@@ -8,14 +8,15 @@
     .meeting-shell { max-width: 980px; margin: 0 auto; }
     .meeting-card { padding: 26px; }
     .meeting-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 24px; }
-    .meeting-title { font-size: 28px; font-weight: 800; margin: 0 0 8px; }
-    .meeting-section { padding: 18px; border: 1px solid var(--panel-border); border-radius: 8px; background: rgba(12, 21, 36, .72); margin-bottom: 16px; }
-    .meeting-section h2 { font-size: 17px; font-weight: 800; margin: 0 0 16px; }
-    .participant-chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: rgba(52, 120, 255, .15); border: 1px solid rgba(52, 120, 255, .25); font-size: 13px; font-weight: 600; margin: 0 6px 6px 0; }
-    .transcript-entry { padding: 14px 0; border-top: 1px solid rgba(148, 163, 184, .12); }
+    .meeting-title { font-size: 28px; font-weight: 800; margin: 0 0 8px; color: var(--text); }
+    .meeting-section { padding: 20px; border: 1px solid var(--panel-border); border-radius: 8px; background: var(--panel-soft); margin-bottom: 16px; }
+    .meeting-section h2 { font-size: 16px; font-weight: 700; margin: 0 0 16px; color: var(--text); }
+    .participant-chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: #fff; border: 1px solid var(--panel-border); color: var(--purple); font-size: 13px; font-weight: 600; margin: 0 6px 6px 0; transition: all 0.2s ease; }
+    .participant-chip:hover { border-color: var(--purple-2); background: rgba(37, 99, 235, 0.05); }
+    .transcript-entry { padding: 14px 0; border-top: 1px solid var(--panel-border); }
     .transcript-entry:first-of-type { border-top: 0; padding-top: 0; }
-    .transcript-speaker { font-weight: 800; color: var(--blue); margin-bottom: 4px; }
-    .transcript-text { color: #d1d8e5; line-height: 1.6; }
+    .transcript-speaker { font-weight: 700; color: var(--blue); margin-bottom: 4px; }
+    .transcript-text { color: var(--text); line-height: 1.6; }
     .meeting-actions { margin-top: 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
     @media (max-width: 575.98px) { .meeting-header, .meeting-actions { flex-direction: column; align-items: stretch; } }
 </style>
@@ -48,7 +49,7 @@
             {{-- Notes --}}
             <div class="meeting-section">
                 <h2><i class="bi bi-journal-text me-2"></i>Meeting Notes</h2>
-                <div style="color: #d1d8e5; line-height: 1.7; white-space: pre-wrap;">{{ $meeting->notes }}</div>
+                <div style="color: var(--text); line-height: 1.7; white-space: pre-wrap;">{{ $meeting->notes }}</div>
             </div>
 
             {{-- Audio/Video Recordings --}}
@@ -70,7 +71,7 @@
                                     </audio>
                                 @endif
                                 <div class="mt-2 text-end">
-                                    <a href="{{ asset('storage/' . $recording->file_path) }}" download class="btn btn-sm btn-outline-light" style="border-color: var(--panel-border);">
+                                    <a href="{{ asset('storage/' . $recording->file_path) }}" download class="btn btn-sm btn-outline-secondary">
                                         <i class="bi bi-download me-1"></i>Download Recording
                                     </a>
                                 </div>
@@ -126,7 +127,7 @@
             @endif
 
             <div class="meeting-actions">
-                <a href="{{ url('/meetings') }}" class="btn btn-outline-light" style="border-color: var(--panel-border);">
+                <a href="{{ url('/meetings') }}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left me-2"></i> Back to Meetings
                 </a>
                 <a href="{{ url('/') }}" class="btn-ai d-inline-flex align-items-center text-decoration-none">

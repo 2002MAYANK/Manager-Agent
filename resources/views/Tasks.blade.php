@@ -85,36 +85,31 @@
         <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
             <h2 class="panel-title mb-0">Task List</h2>
             <div class="d-flex align-items-center gap-2">
-                <select id="statusFilter" class="form-select form-select-sm" style="width: auto; background-color: var(--panel-soft); border-color: var(--panel-border); color: #fff;">
+                <input type="date" id="dateFilter" class="form-control form-control-sm" style="width: auto; background-color: var(--panel-bg); border-color: var(--panel-border); color: var(--text);">
+                <select id="statusFilter" class="form-select form-select-sm" style="width: auto; background-color: var(--panel-bg); border-color: var(--panel-border); color: var(--text);">
                     <option value="">All Status</option>
                     <option value="pending">Pending</option>
                     <option value="in_progress">In Progress</option>
                     <option value="completed">Completed</option>
                 </select>
-                <span class="status-pill blue" id="totalCount">{{ $tasks->total() }} total</span>
+                <span class="status-pill blue" id="totalCount">Tasks</span>
             </div>
         </div>
 
         <div class="table-responsive">
-            <table class="table data-table w-100">
+            <table class="table data-table w-100" id="dataTable">
                 <thead>
                     <tr>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="title">Task <i class="bi bi-arrow-down-up ms-1"></i></a></th>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="employee_name">Employee <i class="bi bi-arrow-down-up ms-1"></i></a></th>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="status">Status <i class="bi bi-arrow-down-up ms-1"></i></a></th>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="assigned_date">Assigned <i class="bi bi-arrow-down-up ms-1"></i></a></th>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="due_date">Due <i class="bi bi-arrow-down-up ms-1"></i></a></th>
-                        <th><a href="#" class="sort-link text-decoration-none text-muted" data-sort="completed_date">Completed <i class="bi bi-arrow-down-up ms-1"></i></a></th>
+                        <th>Task</th>
+                        <th>Employee</th>
+                        <th>Status</th>
+                        <th>Assigned</th>
+                        <th>Due</th>
+                        <th>Completed</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody">
-                    @include('components.tasks-table-body', ['tasks' => $tasks])
-                </tbody>
             </table>
-        </div>
-        <div id="paginationContainer" class="mt-4 d-flex justify-content-end">
-            {{ $tasks->links() }}
         </div>
     </section>
 
@@ -126,9 +121,9 @@
                     @method('PUT')
                     <div class="modal-header border-bottom-0 pb-0">
                         <h5 class="modal-title fw-bold" id="editTaskModalLabel">
-                            <i class="bi bi-pencil-square me-2" style="color: #9b65ff;"></i>Edit Task
+                            <i class="bi bi-pencil-square me-2" style="color: var(--purple);"></i>Edit Task
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
@@ -186,6 +181,35 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    let dt = $('#dataTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '{{ url("/tasks") }}',
+            data: function (d) {
+                d.status = $('#statusFilter').val();
+                d.date = $('#dateFilter').val();
+            }
+        },
+        columns: [
+            { data: 'title', name: 'title' },
+            { data: 'employee_name', name: 'employee_name' },
+            { data: 'status', name: 'status' },
+            { data: 'assigned_date', name: 'assigned_date' },
+            { data: 'due_date', name: 'due_date' },
+            { data: 'completed_date', name: 'completed_date' },
+            { data: 'actions', name: 'actions', orderable: false, searchable: false }
+        ]
+    });
+
+    $('#statusFilter, #dateFilter').on('change', function() {
+        dt.draw();
+    });
+
+    $('#globalSearch').on('keyup', function() {
+        dt.search(this.value).draw();
+    });
+
     document.addEventListener('click', function (e) {
         const editBtn = e.target.closest('.edit-task-btn');
         if (!editBtn) {

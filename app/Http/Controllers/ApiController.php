@@ -15,7 +15,7 @@ class ApiController extends Controller
 {
     public function getEmployees()
     {
-        return response()->json(Employee::all());
+        return response()->json(Employee::paginate(50));
     }
 
     public function storeEmployee(Request $request)
@@ -71,7 +71,7 @@ class ApiController extends Controller
 
     public function exportData()
     {
-        $employees = Employee::with(['tasks', 'attendances', 'commits', 'meetings.transcripts'])->get();
+        $employees = Employee::with(['tasks', 'attendances', 'commits', 'meetings.transcripts', 'meetings.employees'])->take(50)->get();
 
         return response()->json(
             $employees->map(function($e) {
@@ -147,7 +147,7 @@ class ApiController extends Controller
 
     public function getTasks()
     {
-        return response()->json(Task::with('employee')->get());
+        return response()->json(Task::with('employee')->paginate(50));
     }
 
     public function storeTask(Request $request)
@@ -172,7 +172,7 @@ class ApiController extends Controller
 
     public function getAttendences()
     {
-        return response()->json(Attendence::with('employee')->get());
+        return response()->json(Attendence::with('employee')->paginate(50));
     }
 
     public function storeAttendence(Request $request)
@@ -195,7 +195,7 @@ class ApiController extends Controller
 
     public function getCommits()
     {
-        return response()->json(CommitLog::with('employee')->get());
+        return response()->json(CommitLog::with('employee')->paginate(50));
     }
 
     public function storeCommit(Request $request)
@@ -219,7 +219,7 @@ class ApiController extends Controller
 
     public function getMeetings()
     {
-        return response()->json(Meeting::with('employees')->get());
+        return response()->json(Meeting::with('employees')->paginate(50));
     }
 
     public function storeMeeting(Request $request)

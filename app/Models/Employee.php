@@ -11,7 +11,13 @@ class Employee extends Model
         'email',
         'department',
         'designation',
+        'team_id',
     ];
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
 
     public function tasks()
     {
