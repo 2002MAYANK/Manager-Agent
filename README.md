@@ -1,64 +1,124 @@
-<<<<<<< HEAD
-# Manager-Agent
-An AI based agent to automate all tasks for manager.
-=======
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# AI Manager
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+AI Manager is a modern engineering management dashboard designed to streamline team operations, track project progress, and leverage artificial intelligence to provide actionable leadership insights. By integrating directly with developer tools like GitLab, AI Manager automates repetitive managerial tasks, logs attendance, manages meetings, and uses LLMs to generate comprehensive performance reports and meeting transcripts, helping engineering managers make data-driven decisions.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Employee & Team Management**: Organize developers into structured teams, manage profiles, and track reporting lines.
+- **Project & Task Tracking**: Assign tasks, monitor progress status, and manage active project lifecycles.
+- **Attendance Tracking**: Log daily attendance and monitor team availability.
+- **Meeting Management**: Schedule team meetings with support for recordings and automated transcriptions.
+- **AI Chat Assistant**: Interactive AI assistant powered by NVIDIA LLM to query team data and generate summaries.
+- **AI-Powered Report Generation**: Automated summary reports and commit-log analysis.
+- **Leadership Insights**: High-level assessments of team velocity, bottlenecks, and overall health.
+- **GitLab Integration**: Automatically synchronize repository commits and analyze code contributions.
+- **Analytics Dashboard**: Visual representations of active projects, task completion rates, and team metrics.
+- **CSV Import/Export**: Easy bulk data import and export for employee and project records.
+- **Authentication System**: Secure access control using standard Laravel authentication and API token management.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Backend
 
-## Learning Laravel
+- **Framework**: Laravel 12
+- **Language**: PHP 8.x
+- **Core Architecture**: Custom services for AI chat, transcription, and GitLab synchronization
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Frontend
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Views**: Blade template engine
+- **Styling**: Bootstrap 5 & Bootstrap Icons
+- **Interactions**: Vanilla JavaScript
 
-## Laravel Sponsors
+### Database
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Development**: MySQL
+- **Deployment**: SQLite
 
-### Premium Partners
+### Integrations
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- **AI Orchestration**: NVIDIA LLM API
+- **Version Control**: GitLab API
+- **Hosting / Deployment**: Render
 
-## Contributing
+## Screenshots
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Dashboard
 
-## Code of Conduct
+_(Add screenshot here)_
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Reports
 
-## Security Vulnerabilities
+_(Add screenshot here)_
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Leadership Insights
+
+_(Add screenshot here)_
+
+### AI Assistant
+
+_(Add screenshot here)_
+
+## Installation
+
+Follow these steps to set up the project locally:
+
+1. **Clone the repository**:
+
+    ```bash
+    git clone https://github.com/your-username/manager-agent.git
+    cd manager-agent
+    ```
+
+2. **Install dependencies**:
+
+    ```bash
+    composer install
+    npm install && npm run build
+    ```
+
+3. **Configure environment variables**:
+   Create a `.env` file from the example template:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    Open the `.env` file and set up your database connection, NVIDIA LLM API credentials, and GitLab integration settings:
+
+    ```env
+    DB_CONNECTION=mysql
+    DB_DATABASE=manager_agent
+
+    NVIDIA_API_KEY=your_nvidia_api_key
+    GITLAB_PERSONAL_ACCESS_TOKEN=your_gitlab_token
+    ```
+
+4. **Generate application key**:
+
+    ```bash
+    php artisan key:generate
+    ```
+
+5. **Run database migrations**:
+
+    ```bash
+    php artisan migrate --seed
+    ```
+
+6. **Start the development server**:
+    ```bash
+    php artisan serve
+    ```
+
+## Future Improvements
+
+- **Real-time notifications**: Implement WebSockets or push notifications for instant task updates.
+- **Advanced analytics**: Interactive burn-down charts, velocity metrics, and team capacity planning.
+- **Additional AI capabilities**: Multi-modal meeting summarization and auto-assignment of tasks based on developer expertise.
+- **Role-based access control (RBAC)**: Fine-grained user roles (e.g., Admin, Manager, Developer) with distinct permission scopes.
+- **Enhanced GitLab insights**: Pull request review cycle analytics, code review velocity, and quality tracking.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
->>>>>>> 1bd588f (Initial commit)
+This project is licensed under the MIT License.
