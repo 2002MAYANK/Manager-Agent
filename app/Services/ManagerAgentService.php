@@ -21,9 +21,8 @@ class ManagerAgentService
     /**
      * Create a new class instance.
      */
-    public function generateReport($startDate = null, $endDate = null)
+    public function getPerformanceSummaryData($startDate = null, $endDate = null)
     {
-        set_time_limit(300);
 
         // 1. Overall stats
         $totalEmployees = Employee::count();
@@ -398,7 +397,7 @@ class ManagerAgentService
             ->get()->map(fn($p) => ['name' => $p->name, 'status' => $p->status])->all();
 
         // 9. Format performance data JSON
-        $summaryJson = json_encode([
+        $summaryData = [
             'date_range' => ($startDate && $endDate) ? "{$startDate} to {$endDate}" : "All Time",
             'overall_summary' => [
                 'total_employees' => $totalEmployees,
@@ -427,7 +426,17 @@ class ManagerAgentService
                 'grouped_by_risk' => $insightsGroupedByRisk,
                 'risky_commits' => $riskyCommits,
             ],
-        ], JSON_PRETTY_PRINT);
+        ];
+
+        return $summaryData;
+    }
+
+    public function generateReport($startDate = null, $endDate = null)
+    {
+        set_time_limit(300);
+
+        $summaryData = $this->getPerformanceSummaryData($startDate, $endDate);
+        $summaryJson = json_encode($summaryData, JSON_PRETTY_PRINT);
 
         $prompt = "
 You are an AI Manager Agent.

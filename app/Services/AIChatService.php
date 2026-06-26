@@ -15,18 +15,32 @@ class AIChatService
         $systemPrompt = "You are AI Manager Assistant, a helpful, intelligent copilot for a management platform. You can analyze data, summarize reports, and answer questions about employees, tasks, projects, meetings, teams, and gitlab commits.\n";
         $systemPrompt .= "Current Page Context: $context\n";
 
-        // Add some basic stats to the prompt as context
+        // Add Leadership Insights or basic stats to the prompt as context
         try {
-            $empCount = Employee::count();
-            $taskCount = Task::count();
-            $projectCount = Project::count();
-            $teamCount = Team::count();
-            $systemPrompt .= "System Stats: $empCount Employees, $taskCount Tasks, $projectCount Projects, $teamCount Teams.\n";
+            $latestReport = \App\Models\Report::latest('generated_at')->orWhereNotNull('id')->latest('id')->first();
+            if ($latestReport && !empty($latestReport->full_report)) {
+                $reportData = json_decode($latestReport->full_report, true);
+                $systemPrompt .= "Leadership Insights Data (Latest Report):\n" . json_encode($reportData) . "\n";
+            } else {
+                $managerAgent = app(\App\Services\ManagerAgentService::class);
+                $rawData = $managerAgent->getPerformanceSummaryData();
+                $systemPrompt .= "Real-time Metrics (Use this to answer questions about top performers, best teams, risks, attention required, etc):\n" . json_encode($rawData) . "\n";
+            }
         } catch (\Exception $e) {
-            // Ignore DB errors if tables missing
+            // Fallback to basic stats if DB error or tables missing
+            try {
+                $empCount = Employee::count();
+                $taskCount = Task::count();
+                $projectCount = Project::count();
+                $teamCount = Team::count();
+                $systemPrompt .= "System Stats: $empCount Employees, $taskCount Tasks, $projectCount Projects, $teamCount Teams.\n";
+            } catch (\Exception $e2) {
+                // Ignore DB errors
+            }
         }
         
         $systemPrompt .= "Always answer concisely and professionally. Format text with Markdown. Emphasize key data.\n";
+        $systemPrompt .= "When asked about top performers, best teams, or risks, strictly use the metrics provided above instead of saying you cannot access real-time data.\n";
 
         $messages = [
             ['role' => 'system', 'content' => $systemPrompt]
