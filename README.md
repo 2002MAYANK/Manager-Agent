@@ -45,19 +45,23 @@ AI Manager is a modern engineering management dashboard designed to streamline t
 
 ### Dashboard
 
-_(Add screenshot here)_
+<img width="1920" height="1080" alt="Screenshot (1168)" src="https://github.com/user-attachments/assets/f87be6df-a227-4acc-9c6b-b2aadb299c6e" />
+
 
 ### Reports
 
-_(Add screenshot here)_
+<img width="1920" height="1080" alt="Screenshot (1169)" src="https://github.com/user-attachments/assets/fbec22f7-1150-4a96-a7d1-4b11afccd888" />
+
 
 ### Leadership Insights
 
-_(Add screenshot here)_
+<img width="1920" height="1080" alt="Screenshot (1170)" src="https://github.com/user-attachments/assets/6ebb85db-6549-4f6a-a9b2-63922ce42b6c" />
+
 
 ### AI Assistant
 
-_(Add screenshot here)_
+<img width="1920" height="1080" alt="Screenshot (1171)" src="https://github.com/user-attachments/assets/e71c15e2-a2ec-4e72-b963-ba0b4c458c16" />
+
 
 ## Installation
 
