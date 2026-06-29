@@ -28,11 +28,11 @@ class ProjectController extends Controller
                 ->addColumn('actions', function($row) {
                     return '
                         <div class="d-flex gap-2">
-                            <a href="/projects/'.$row->id.'" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+                            <a href="'.url('/projects/'.$row->id).'" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
                             <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editProjectModal" data-project=\''.json_encode($row).'\'>
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            <form action="/projects/'.$row->id.'" method="POST" class="d-inline">
+                            <form action="'.url('/projects/'.$row->id).'" method="POST" class="d-inline">
                                 '.csrf_field().'
                                 '.method_field('DELETE').'
                                 <button type="submit" class="btn btn-sm btn-outline-danger js-delete-confirm" data-label="project">

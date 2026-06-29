@@ -1294,7 +1294,7 @@
         aiClearChatBtn.addEventListener('click', function() {
             if (confirm('Start a new chat and clear history?')) {
                 $.ajax({
-                    url: '/ai-chat/clear',
+                    url: '{{ url("/ai-chat/clear") }}',
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken
@@ -1378,7 +1378,7 @@
         }
 
         function loadHistory() {
-            $.get('/ai-chat/history', function(data) {
+            $.get('{{ url("/ai-chat/history") }}', function(data) {
                 if (data && data.history && data.history.length > 0) {
                     const welcomeMsg = document.getElementById('aiWelcomeMsg');
                     if (welcomeMsg) welcomeMsg.style.display = 'none';
@@ -1406,7 +1406,7 @@
             showTyping();
 
             $.ajax({
-                url: '/ai-chat/send',
+                url: '{{ url("/ai-chat/send") }}',
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken
